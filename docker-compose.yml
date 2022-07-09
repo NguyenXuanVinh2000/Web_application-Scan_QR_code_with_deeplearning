@@ -1,0 +1,12 @@
+version: '3'
+services:
+  server:
+    image: qr_detection_gpu:1.15.0-gpu
+    ports:
+      - '8501:8501'
+      - '8500:8500'
+
+    command:
+      - '--model_config_file=./models.config'
+
+    runtime: nvidia
