@@ -1,4 +1,3 @@
-from tracemalloc import start
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
@@ -35,7 +34,7 @@ WEBRTC_CLIENT_SETTINGS = ClientSettings(
     },
 )
 
-def obj_detection(my_img):
+def scan_image(my_img):
     """
     Show the display result scan QR code with Image
     """
@@ -47,7 +46,7 @@ def obj_detection(my_img):
     plt.imshow(my_img)
     column1.pyplot(use_column_width=True)
     newImage = np.array(my_img.convert('RGB'))
-    img, context = decode_image(newImage)
+    img, contents = decode_image(newImage)
     st.text("")
     column2.subheader("Output image")
     st.text("")
@@ -55,16 +54,16 @@ def obj_detection(my_img):
     plt.imshow(img)
     column2.pyplot(use_column_width=True)
     if st.checkbox("Show the result scan QR code", value=True):
-        if context == []:
+        if contents == []:
             st.success("Unable to decode QR code")
-        for i in context:
-            st.success(i)
+        for content in contents:
+            st.success(content)
     st.markdown(
             "DESIGN BY NGUYEN XUAN VINH - contact: vinhnx20@gmail.com"
     )
 
 
-def scanQR_video(video):
+def scan_video(video):
     """
     Show the display result scan QR code with Video
     """
@@ -76,14 +75,14 @@ def scanQR_video(video):
     while ret:
         ret, frame_raw = vid.read()
         if ret:
-            img, context = decode_camera(frame_raw)
+            img, contents = decode_camera(frame_raw)
             frame.image(img, channels="BGR")
-            if context == []:
+            if contents == []:
                 result.success("Unable to decode QR code")
-            for i in context:
-                result.success(i)
-                if  i not in lst:
-                    lst.append(i)
+            for content in contents:
+                result.success(content)
+                if  content not in lst:
+                    lst.append(content)
     st.subheader("Show all result scan QR code with video")
     for j in lst:
         st.success(j)
@@ -91,7 +90,7 @@ def scanQR_video(video):
             "DESIGN BY NGUYEN XUAN VINH - contact: vinhnx20@gmail.com"
     )
 
-def app_object_detection():
+def scan_camera():
     """
     Show the display result scan QR code with Camera
     """
@@ -104,11 +103,11 @@ def app_object_detection():
         def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
             image = frame.to_ndarray(format="bgr24")
             annotated_image, results = decode_camera(image)
-            context = []
+            content = []
             for result in results:
-                if result not in context:
-                    context.append(result)
-            self.result_queue.put(context)
+                if result not in content:
+                    content.append(result)
+            self.result_queue.put(content)
             return av.VideoFrame.from_ndarray(annotated_image, format="bgr24")
 
     webrtc_ctx = webrtc_streamer(
@@ -144,30 +143,35 @@ def main():
     """
     It is a main function with 4 option for user
     """
-    st.set_page_config(layout="wide")
+    #st.set_page_config(layout="wide")
     st.image("https://tuyensinh.uit.edu.vn/sites/default/files/uploads/files/dai-hoc-uit-3.jpg",  use_column_width=True)
-    st.markdown("<h1 style='text-align: center; color: red;'>WELCOME TO SCAN QR CODE APP - UIT</h1>", unsafe_allow_html=True)
-    st.header(
-        "Yon can scan QR code. Click option:")
-    choice = st.radio("", ("See an illustration", "Scan QR code with Image", "Scan QR code with Video", "Scan QR code with Camera"))
-
+    st.markdown("<h1 style='text-align: center; color: red;'>DEMO SCAN QR CODE APP - UIT</h1>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center;' > Sinh vien: 18521655 - Nguyen Xuan Vinh </h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center;' > GVHD: ThS. Pham The Son </h3>", unsafe_allow_html=True)    
+    with st.sidebar:
+        st.header(
+            "Yon can scan QR code. Click option:")
+        choice = st.radio("", ("See an illustration", "Scan QR code with Image", "Scan QR code with Video", "Scan QR code with Camera"))
+        st.markdown(
+            "contact: vinhnx20@gmail.com"
+        )
     if choice == "Scan QR code with Image":
         image_file = st.file_uploader("Upload", type=['jpg', 'png', 'jpeg', 'svg', 'webp', 'jfif'])
         if image_file is not None:
             my_img = Image.open(image_file)
-            obj_detection(my_img)
+            scan_image(my_img)
     elif choice == "Scan QR code with Video":
         uploaded_video = st.file_uploader("Choose video", type=["mp4", "mov"])
         if uploaded_video is not None: 
             vid = uploaded_video.name
             with open(vid, mode='wb') as f:
                 f.write(uploaded_video.read())
-            scanQR_video(vid)
+            scan_video(vid)
     elif choice == "Scan QR code with Camera":
-        app_object_detection()
+        scan_camera()
     elif choice == "See an illustration":
         my_img = Image.open("images/qr.jpg")
-        obj_detection(my_img)
+        scan_image(my_img)
 
 def app_media_constraints():
     """ A sample to configure MediaStreamConstraints object """

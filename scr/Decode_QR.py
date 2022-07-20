@@ -2,6 +2,7 @@ from pyzbar import pyzbar
 import cv2
 from preprocessing import *
 import time
+from title_web import *
 
 def pyzbar_decode(img):
     """
@@ -13,6 +14,8 @@ def pyzbar_decode(img):
         barcodeData = barcode.data.decode("utf-8")
         content = "{}".format(barcodeData)
         if content != "":
+            if "http" in content:
+                content = content + "\t Title website: " + title(content)
             return content
     return content
 
@@ -32,13 +35,13 @@ def decode_image(newImage):
     """
     items = []
     img = cv2.cvtColor(newImage, 1)
-    imgs = preprocess(img)
+    imgs = preprocessing_image_input(img)
     #YOLOv5
     # result_yolov5 = grpc_client_request_YOLOv5(imgs)
     # boxes, confidences = convert_bbox_yolov5(result_yolov5, img)
     #YOLOv3, YOLOv4
     result = grpc_client_request_image(imgs)
-    boxes, confidences = convert_bbox(result, img)
+    boxes, confidences = convert_bbox_yolov3_and_yolov4(result, img)
 
     score_threshold = 0.7
     nms_threshold = 0.6
@@ -57,7 +60,7 @@ def decode_image(newImage):
             # Decode QR code by pyzbar
             content = pyzbar_decode(crop_img)
             # Decode QR code by opencv-python
-            #content = cv2_decode(crop_img)
+            # content = cv2_decode(crop_img)
             if content != "" and content not in items:
                 items.append(content)
     return img, items
@@ -69,13 +72,13 @@ def decode_camera(newImage):
     start_time = time.time()
     items = []
     img = cv2.cvtColor(newImage, 1)
-    imgs = preprocess(img)
+    imgs = preprocessing_image_input(img)
     #YOLOv5
     # result_yolov5 = grpc_client_request_YOLOv5(imgs)
     # boxes, confidences = convert_bbox_yolov5(result_yolov5, img)
     #YOLOv3, YOLOv4
     result = grpc_client_request_camera(imgs)
-    boxes, confidences = convert_bbox(result, img)
+    boxes, confidences = convert_bbox_yolov3_and_yolov4(result, img)
     score_threshold = 0.7
     nms_threshold = 0.6
     indexes = cv2.dnn.NMSBoxes(boxes, confidences, score_threshold, nms_threshold)

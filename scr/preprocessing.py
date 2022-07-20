@@ -3,7 +3,7 @@ import cv2
 from keras.preprocessing.image import img_to_array
 import numpy as np
 
-def preprocess(image):
+def preprocessing_image_input(image):
     """
     Process input image in YOLO
     """
@@ -13,7 +13,7 @@ def preprocess(image):
     im_arr = np.expand_dims(im_arr, axis=0)
     return im_arr
 
-def convert_bbox(boxes, image):
+def convert_bbox_yolov3_and_yolov4(boxes, image):
     """
     The function convert bounding box with YOLOv3 and YOLOv4
     """
