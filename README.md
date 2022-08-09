@@ -34,6 +34,6 @@
 	The application install in OS ubuntu
 # IV. Information author:
 	Name			: 	Nguyen Xuan Vinh
-	Phone Number	: 	0965004314
+	Phone Number		: 	0965004314
 	Email			: 	18521655@gm.uit.edu.vn
 						vinhnx20@gmail.com
