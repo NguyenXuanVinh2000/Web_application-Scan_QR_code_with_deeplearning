@@ -1,0 +1,10 @@
+# relative paths from folder yolov5
+#  .
+#  ├── custom_dataset
+#  └── yolov5
+train: /content/drive/MyDrive/KHOA_LUAN_TOT_NGHIEP/Yolov5/images/train/
+val: /content/drive/MyDrive/KHOA_LUAN_TOT_NGHIEP/Yolov5/images/test/
+# number of classes
+nc: 1
+# class names
+names: ['QR']
