@@ -1,0 +1,12 @@
+streamlit
+numpy
+opencv-contrib-python-headless
+image
+matplotlib
+matplotlib-inline
+aiortc
+av
+pydub
+streamlit_webrtc
+typing_extensions
+pyzbar==0.1.8
